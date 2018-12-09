@@ -1,0 +1,13 @@
+.cheats {
+    opacity: 0;
+    list-style: none;
+    transition: opacity .2s 0s ease-in-out;
+}
+
+.cheats:hover {
+    opacity: 1;
+}
+
+#cheat-valid {
+    display: none;
+}
