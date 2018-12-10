@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     'use strict';
 
     const options = {
-        selector: '#background',
+        backgroundSelector: '#background',
         keystrokeDelay: 1000,
         eventType: 'keydown',
         keySequences: {
@@ -39,28 +39,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 buffer = [key];
             }
 
-            const sequence = buffer.join('');
-            const sequenceValue = options.keySequences[sequence];
             state = { ...state, lastKeyTime: currentTime, buffer: buffer };
 
-            updateUI(sequence, options);
-
-            if (!sequenceValue) return;
-
-            callback(sequence, options.selector);
+            callback(buffer, options);
         });
     }
 
-    function updateBackground(imgName, selector) {
-        const container = document.querySelector(selector);
-        container.style.backgroundImage = `url(images/${imgName}.jpg)`;
+    function updateBackground(buffer, options) {
+        const input = buffer.join('');
+        const container = document.querySelector(options.backgroundSelector);
+        container.style.backgroundImage = `url(images/${input}.jpg)`;
+
+        updateUI(input, options);
     }
 
-    function updateUI(sequence, options) {
+    function updateUI(input, options) {
         const userInput = document.querySelector(options.userInputSelector);
-        userInput.textContent = sequence;
+        userInput.textContent = input;
 
         const cheatMessage = document.querySelector(options.cheatMessageSelector);
-        cheatMessage.textContent = options.keySequences[sequence] || 'Nothing';
+        cheatMessage.textContent = options.keySequences[input] || 'Nothing';
     }
 });
