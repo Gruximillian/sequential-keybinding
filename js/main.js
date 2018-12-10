@@ -2,15 +2,15 @@ document.addEventListener('DOMContentLoaded', function() {
     'use strict';
 
     const options = {
-        backgroundSelector: '#background',
-        keystrokeDelay: 1000,
-        eventType: 'keydown',
+        eventType: 'keyup',
+        keystrokeDelay: 500,
         keySequences: {
             'idfa': 'All Weapons + Ammo',
             'idkfa': 'All Weapons + Ammo + Keys',
             'idbeholds': 'Beserk Pack',
             'idclev31': 'Bonus Level'
         },
+        backgroundSelector: '#background',
         userInputSelector: '#user_input',
         cheatMessageSelector: '#cheat_message'
     };
@@ -19,13 +19,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function keyMapper(options, callback) {
         const charList = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        const keystrokeDelay = options.keystrokeDelay || 1000;
+        const eventType = options.eventType || 'keydown';
+
         let state = {
             buffer: [],
             lastKeyTime: undefined
         };
 
-        document.addEventListener(options.eventType, event => {
-            const key = event.key;
+        document.addEventListener(eventType, event => {
+            const key = event.key.toLowerCase();
             const currentTime = Date.now();
             const lastKeyTime = state.lastKeyTime || currentTime;
             let buffer;
@@ -33,13 +36,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // we are only interested in alphanumeric characters
             if (charList.indexOf(key) === -1) {
                 buffer = [];
-            } else if (currentTime - lastKeyTime < options.keystrokeDelay) {
+            } else if (currentTime - lastKeyTime < keystrokeDelay) {
                 buffer = [...state.buffer, key];
             } else {
                 buffer = [key];
             }
 
-            state = { ...state, lastKeyTime: currentTime, buffer: buffer };
+            state = { buffer: buffer, lastKeyTime: currentTime };
 
             callback(buffer, options);
         });
