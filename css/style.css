@@ -1,13 +1,70 @@
-.cheats {
-    opacity: 0;
+@import url('https://fonts.googleapis.com/css?family=Titillium+Web:400,600');
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Titillium Web", sans-serif;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    background-color: #050000;
+}
+
+.content {
+    height: 100vh;
+    flex: 4 1 auto;
+    background-color: inherit;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.title {
+    text-align: center;
+    margin: 0;
+    padding: 30px 0;
+    color: #fff;
+    background-color: inherit;
+}
+
+.sidebar {
+    flex: 1 1 0;
+    width: 20%;
+    max-width: 280px;
+    padding: 40px 20px;
+    color: #fff;
+    font-size: 18px;
+}
+
+.list {
     list-style: none;
-    transition: opacity .2s 0s ease-in-out;
+    padding: 0;
 }
 
-.cheats:hover {
-    opacity: 1;
+.list__item {
+    font-size: 20px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: wheat;
 }
 
-#cheat-valid {
-    display: none;
+.user_input {
+    height: 150px;
+    margin-top: 100px;
+}
+
+.user_input__value {
+    overflow-x: auto;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+.user_input__value,
+.cheat_message {
+    font-size: 25px;
+    color: greenyellow;
 }

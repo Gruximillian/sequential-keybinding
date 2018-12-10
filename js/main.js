@@ -1,54 +1,66 @@
-window.addEventListener('load', function() {
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
 
-    const cheatValid = document.querySelector('#cheat-valid');
-    const cheatMessage = cheatValid.querySelector('#cheat-message');
-    const image = cheatValid.querySelector('#cheat-image');
-
-    const cheatCodes = {
-        'idfa': 'All Weapons + Ammo',
-        'idkfa': 'All Weapons + Ammo + Keys',
-        'idbeholds': 'Beserk Pack',
-        'idclev31': 'Bonus Level'
+    const options = {
+        selector: '#background',
+        keystrokeDelay: 1000,
+        eventType: 'keydown',
+        keySequences: {
+            'idfa': 'All Weapons + Ammo',
+            'idkfa': 'All Weapons + Ammo + Keys',
+            'idbeholds': 'Beserk Pack',
+            'idclev31': 'Bonus Level'
+        },
+        userInputSelector: '#user_input',
+        cheatMessageSelector: '#cheat_message'
     };
 
-    let keySequence = '';
-    let lastKeyTime;
-    let firstKey = true;
+    keyMapper(options, updateBackground);
 
-    document.addEventListener('keydown', function(e) {
-        if (firstKey) {
-            // This enables time tracking after the first key was pressed
-            lastKeyTime = Date.now();
-        }
-        const timeNow = Date.now();
-        const elapsedTime = timeNow - lastKeyTime;
+    function keyMapper(options, callback) {
+        const charList = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let state = {
+            buffer: [],
+            lastKeyTime: undefined
+        };
 
-        if (elapsedTime <= 1000) {
-            // Update key sequence and disable firstKey tracker
-            keySequence += e.key;
-            firstKey = false;
-        } else {
-            // Reset key sequence and the firstKey tracker
-            keySequence = '';
-            keySequence += e.key;
-            firstKey = true;
-        }
+        document.addEventListener(options.eventType, event => {
+            const key = event.key;
+            const currentTime = Date.now();
+            const lastKeyTime = state.lastKeyTime || currentTime;
+            let buffer;
 
-        checkCode(keySequence);
-        // Update lastKeyTime so that we can check if the user didn't make a large pause between key strokes
-        lastKeyTime = timeNow;
-    });
+            // we are only interested in alphanumeric characters
+            if (charList.indexOf(key) === -1) {
+                buffer = [];
+            } else if (currentTime - lastKeyTime < options.keystrokeDelay) {
+                buffer = [...state.buffer, key];
+            } else {
+                buffer = [key];
+            }
 
-    function checkCode(codeString) {
-        if (cheatCodes[codeString]) {
-            image.src = `images/${codeString}.jpg`;
-            cheatMessage.textContent = cheatCodes[codeString];
-            cheatValid.style.display = 'block';
-        } else {
-            image.src = '';
-            cheatMessage.textContent = '';
-            cheatValid.style.display = 'none';
-        }
+            const sequence = buffer.join('');
+            const sequenceValue = options.keySequences[sequence];
+            state = { ...state, lastKeyTime: currentTime, buffer: buffer };
+
+            updateUI(sequence, options);
+
+            if (!sequenceValue) return;
+
+            callback(sequence, options.selector);
+        });
+    }
+
+    function updateBackground(imgName, selector) {
+        const container = document.querySelector(selector);
+        container.style.backgroundImage = `url(images/${imgName}.jpg)`;
+    }
+
+    function updateUI(sequence, options) {
+        const userInput = document.querySelector(options.userInputSelector);
+        userInput.textContent = sequence;
+
+        const cheatMessage = document.querySelector(options.cheatMessageSelector);
+        cheatMessage.textContent = options.keySequences[sequence] || 'Nothing';
     }
 });

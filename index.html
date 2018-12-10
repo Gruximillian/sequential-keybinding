@@ -3,25 +3,33 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Common Event Types</title>
+    <title>Binding a sequence of keys</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="js/main.js"></script>
 </head>
 <body>
-    <h1>Common Event Types</h1>
-    <p>Cheat codes:</p>
-    <div class="cheats">
-        <ul>
-            <li><strong>idfa</strong>: All Weapons + Ammo</li>
-            <li><strong>idkfa</strong>: All Weapons + Ammo + Keys</li>
-            <li><strong>idbeholds</strong>: Beserk Pack</li>
-            <li><strong>idclev31</strong>: Bonus Level</li>
-        </ul>
-    </div>
-    <div id="cheat-valid">
-        <p>Good one, cheater!</p>
-        <p>You got <strong id="cheat-message"></strong></p>
-        <img id="cheat-image" src="" />
-    </div>
+
+    <main class="container">
+        <aside class="sidebar">
+            <p class="instructions">Use the following key sequences to change the background image (case insensitive):</p>
+            <ul class="list">
+                <li class="list__item">idfa</li>
+                <li class="list__item">idkfa</li>
+                <li class="list__item">idbeholds</li>
+                <li class="list__item">idclev31</li>
+            </ul>
+            <div class="user_input">
+                <p class="user_input__label">You entered:</p>
+                <p id="user_input" class="user_input__value"></p>
+            </div>
+            <div id="cheat_block" class="cheat_block">
+                <p>You got:</p>
+                <p id="cheat_message" class="cheat_message"></p>
+            </div>
+        </aside>
+        <div id="background" class="content">
+            <h1 class="title">Binding a sequence of keys</h1>
+        </div>
+    </main>
 </body>
 </html>
