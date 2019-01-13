@@ -1,26 +1,56 @@
 document.addEventListener('DOMContentLoaded', () => {
     'use strict';
 
-    let buffer = [];
-    let lastKeyTime = Date.now();
+    const options = {
+        eventType: 'keydown',
+        keystrokeDelay: 1000
+    };
 
-    document.addEventListener('keydown', event => {
-        const charList = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    keyMapper([updateBackground, updateUI], options);
+});
+
+function keyMapper(callbackList, options) {
+    const eventType = options && options.eventType || 'keydown';
+    const keystrokeDelay = options && options.keystrokeDelay || 1000;
+
+    let state = {
+        buffer: [],
+        lastKeyTime: Date.now()
+    };
+
+    document.addEventListener(eventType, event => {
         const key = event.key.toLowerCase();
-
-        // we are only interested in alphanumeric keys
-        if (charList.indexOf(key) === -1) return;
-
         const currentTime = Date.now();
+        let buffer = [];
 
-        if (currentTime - lastKeyTime > 1000) {
-            buffer = [];
+        if (currentTime - state.lastKeyTime < keystrokeDelay) {
+            buffer = [...state.buffer, key];
+        } else {
+            buffer = [key];
         }
 
-        buffer.push(key);
-        lastKeyTime = currentTime;
+        state = {buffer: buffer, lastKeyTime: currentTime};
 
-        const container = document.querySelector('#background');
-        container.style.backgroundImage = `url(images/${buffer.join('')}.jpg)`;
+        callbackList.forEach(callback => callback(buffer));
     });
-});
+}
+
+function updateBackground(keySequence) {
+    const container = document.querySelector('#background');
+    container.style.backgroundImage = `url(images/${keySequence.join('')}.jpg)`;
+}
+
+function updateUI(keySequence) {
+    const userInput = keySequence.join('');
+    const keySequences = {
+        'idfa': 'All Weapons + Ammo',
+        'idkfa': 'All Weapons + Ammo + Keys',
+        'idbeholds': 'Beserk Pack',
+        'idclev31': 'Bonus Level'
+    };
+    const userInputDisplay = document.querySelector('#user_input');
+    userInputDisplay.textContent = userInput;
+
+    const cheatMessage = document.querySelector('#cheat_message');
+    cheatMessage.textContent = keySequences[userInput] || 'Nothing';
+}
