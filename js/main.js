@@ -2,65 +2,55 @@ document.addEventListener('DOMContentLoaded', () => {
     'use strict';
 
     const options = {
-        eventType: 'keyup',
-        keystrokeDelay: 500,
-        keySequences: {
-            'idfa': 'All Weapons + Ammo',
-            'idkfa': 'All Weapons + Ammo + Keys',
-            'idbeholds': 'Beserk Pack',
-            'idclev31': 'Bonus Level'
-        },
-        backgroundSelector: '#background',
-        userInputSelector: '#user_input',
-        cheatMessageSelector: '#cheat_message'
+        eventType: 'keydown',
+        keystrokeDelay: 1000
     };
 
-    keyMapper(options, updateBackground);
-
-    function keyMapper(options, callback) {
-        const charList = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        const keystrokeDelay = options.keystrokeDelay || 1000;
-        const eventType = options.eventType || 'keydown';
-
-        let state = {
-            buffer: [],
-            lastKeyTime: undefined
-        };
-
-        document.addEventListener(eventType, event => {
-            const key = event.key.toLowerCase();
-            const currentTime = Date.now();
-            const lastKeyTime = state.lastKeyTime || currentTime;
-            let buffer;
-
-            // we are only interested in alphanumeric characters
-            if (charList.indexOf(key) === -1) {
-                buffer = [];
-            } else if (currentTime - lastKeyTime < keystrokeDelay) {
-                buffer = [...state.buffer, key];
-            } else {
-                buffer = [key];
-            }
-
-            state = { buffer: buffer, lastKeyTime: currentTime };
-
-            callback(buffer, options);
-        });
-    }
-
-    function updateBackground(buffer, options) {
-        const input = buffer.join('');
-        const container = document.querySelector(options.backgroundSelector);
-        container.style.backgroundImage = `url(images/${input}.jpg)`;
-
-        updateUI(input, options);
-    }
-
-    function updateUI(input, options) {
-        const userInput = document.querySelector(options.userInputSelector);
-        userInput.textContent = input;
-
-        const cheatMessage = document.querySelector(options.cheatMessageSelector);
-        cheatMessage.textContent = options.keySequences[input] || 'Nothing';
-    }
+    keyMapper([updateBackground, updateUI], options);
 });
+
+function keyMapper(callbackList, options) {
+    const eventType = options && options.eventType || 'keydown';
+    const keystrokeDelay = options && options.keystrokeDelay || 1000;
+
+    let state = {
+        buffer: [],
+        lastKeyTime: Date.now()
+    };
+
+    document.addEventListener(eventType, event => {
+        const key = event.key.toLowerCase();
+        const currentTime = Date.now();
+        let buffer = [];
+
+        if (currentTime - state.lastKeyTime < keystrokeDelay) {
+            buffer = [...state.buffer, key];
+        } else {
+            buffer = [key];
+        }
+
+        state = {buffer: buffer, lastKeyTime: currentTime};
+
+        callbackList.forEach(callback => callback(buffer));
+    });
+}
+
+function updateBackground(keySequence) {
+    const container = document.querySelector('#background');
+    container.style.backgroundImage = `url(images/${keySequence.join('')}.jpg)`;
+}
+
+function updateUI(keySequence) {
+    const userInput = keySequence.join('');
+    const keySequences = {
+        'idfa': 'All Weapons + Ammo',
+        'idkfa': 'All Weapons + Ammo + Keys',
+        'idbeholds': 'Beserk Pack',
+        'idclev31': 'Bonus Level'
+    };
+    const userInputDisplay = document.querySelector('#user_input');
+    userInputDisplay.textContent = userInput;
+
+    const cheatMessage = document.querySelector('#cheat_message');
+    cheatMessage.textContent = keySequences[userInput] || 'Nothing';
+}
