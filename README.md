@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 If we define the `buffer` array inside the `keydown` event listener, it will be reset every time a key is pressed, and the entered sequence of keys will be lost. Because of that we need to define it outside of the `keydown` event listener. Now we are able to save all of the entered keys. But if we look at the log, we can notice that now we are saving the keys all the time, and the array just grows with new keys being pressed. Check the gif bellow to see the result.
 
-![logging the key sequence](screenshots/hello.gif)
+![logging the key sequence](https://raw.githubusercontent.com/Gruximillian/sequential-keybinding/master/screenshots/hello.gif)
 
 See how after writing 'hello' and some delay, when I continue typing, it still has all of the previous values in the array. That is not very useful for what we want. It would be good to reset the list of entered keys after a certain time delay. For the condition to do that we can use the time interval between the last two key presses. If that interval is longer than the specified amount of time, then we will reset the `buffer` array. Let's do that next.
 
