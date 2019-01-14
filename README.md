@@ -8,7 +8,7 @@ Even though today JavaScript can be used to do so much more, this basic feature 
 
 ## What are we building?
 
-For this article I've decided to make an element on the page change its background image based on the sequence of keys the user types, so we are basically dealing with the styling, nothing too fancy. We will also add some text updates as well just to make the demonstration richer and to provide more info to the user. My idea was to use the key sequences that are used as cheat codes in an old FPS game, Doom and Doom 2. Basically, when the user types a key combination, the game enables some benefits to the user, like more ammo, more health, invulnerability, etc. In the example that we will build, we will make the background image on an element on the page to change based on the key sequence typed in by the user. You can see and try the demo [here](https://gruximillian.github.io/sequential-keybinding/).
+For this article I've decided to make an element on the page change its background image based on the sequence of keys the user types. So we are basically dealing with the styling, nothing too fancy. We will also add some text updates as well just to make the demonstration richer and to provide more info to the user. My idea was to use the key sequences that are used as cheat codes in an old FPS game, Doom and Doom 2. Basically, when the user types a key combination, the game enables some benefits to the user, like more ammo, more health, invulnerability, etc. In the example that we will build, we will make the background image for an element on the page to change based on the key sequence typed in by the user. You can see and try the demo [here](https://gruximillian.github.io/sequential-keybinding/).
 
 ## Basic project
 
@@ -87,13 +87,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
-By creating the `charList` variable which contains all the characters we are interested in, we are able to check if the `key` is present in the `charList` string, and if not, we simply return from the function and without logging the character.
+By creating the `charList` variable which contains all the characters we are interested in, we are able to check if the `key` is present in the `charList` string, and if not, we simply return from the function without logging the character.
 
 Now that we are listening to the key events and are able to filter only the keys we are interested in, it is time to see how we can save a sequence of entered keys.
 
 ### Saving the entered key sequence
 
-To save the sequence of entered keys we need to add a variable that will store that sequence and which we can update on every key events that we are interested in. We could use a string that we can concatenate keys on, but we could also use an array in which we can store individual keys as the array items. In this simple use case, it doesn't matter much what we use, but I'll go with the array approach. The array approach is a suggested approach over the string concatenation in cases where a lot of strings have to be concatenated, and it also allows us to use all of the array methods if we need them.
+To save the sequence of entered keys we need to add a variable that will store that sequence and which we can update on every key event that we are interested in. We could use a string that we can concatenate keys on, but we could also use an array in which we can store individual keys as the array items. In this simple use case, it doesn't matter much what we use, but I'll go with the array approach. The array approach is a suggested approach over the string concatenation in cases where a lot of strings have to be concatenated, and it also allows us to use all of the array methods if we need them.
 
 Let's create a variable called `buffer`, an empty array initially, and push the new keys into it.
 
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 If we define the `buffer` array inside the `keydown` event listener, it will be reset every time a key is pressed, and the entered sequence of keys will be lost. Because of that we need to define it outside of the `keydown` event listener. Now we are able to save all of the entered keys. But if we look at the log, we can notice that now we are saving the keys all the time, and the array just grows with new keys being pressed. Check the gif bellow to see the result.
 
-[gif](gif) // EDIT THIS LINE EDIT THIS LINE EDIT THIS LINE EDIT THIS LINE EDIT THIS LINE
+![logging the key sequence](screenshots/hello.gif)
 
 See how after writing 'hello' and some delay, when I continue typing, it still has all of the previous values in the array. That is not very useful for what we want. It would be good to reset the list of entered keys after a certain time delay. For the condition to do that we can use the time interval between the last two key presses. If that interval is longer than the specified amount of time, then we will reset the `buffer` array. Let's do that next.
 
@@ -166,7 +166,7 @@ The last thing we need to do here is to update the `lastKeyTime` value. We simpl
 
 Finally, we are ready to do what we wanted, change the background based on the sequence of keys that user has entered.
 
-If the user enters the correct key sequence, we need to grab an element on the page and update its background according the the user input. That seem like we need to have a check for the correct key sequence. While that is almost certainly true in most cases, in this one it is not. The nature of this problem allows us to skip the check if we are ok with what happens if the key sequence is not correct. What do I mean by this? Let me explain in detail.
+If the user enters the correct key sequence, we need to grab an element on the page and update its background according the the user input. That seems like we need to have a check for the correct key sequence. While that is almost certainly true in most cases, in this one it is not. The nature of this problem allows us to skip the check if we are ok with what happens if the key sequence is not correct. What do I mean by this? Let me explain in detail.
 
 If we want to change the background image using CSS, we will need to update the url for the image. If the images are named the same as the key sequences, then all we need to do is to read the input, make it a string, and set that as the url for the background image. The interesting thing is that if the image does not exist, the background will not be shown. Which means that in cases where we do have an image displayed, and then type something that does not match an existing image url, the background image will be gone. In this case I am ok with that, therefore the check if the url is correct is not needed. But if we would like to keep the currently displayed image, then that check will be necessary. Let's do it the simple way, that is, without that check.
 
@@ -205,7 +205,7 @@ With this we have achieved the main goal of this article. Now the user can try t
 
 ## Improving the project
 
-Looking at our code in whole shows us that we are using some 'global' variables. Global in the sense that they are in the top context of our script, enclosed in the 'DOMContentLoaded' event listener where all the rest of the code will be, meaning that they will mix with other variables in the top level context of our script. Our key event listener does not really need to mix with other code, but the declaration of the variables `buffer` and `lastKeyTime` can't go inside the `keydown` event listener because that will reset them with every keystroke and break the functionality.
+Looking at our code in whole shows us that we are using some 'global' variables. Global in the sense that they are in the top context of our script, enclosed in the `DOMContentLoaded` event listener function where all the rest of the code will be, meaning that they will mix with other variables in the top level context of our script. The declaration of the variables `buffer` and `lastKeyTime` can't go inside the `keydown` event listener because that will reset them with every keystroke and break the functionality.
 
 ### Wrapping the code into a function
 
@@ -244,13 +244,13 @@ function keyMapper() {
 }
 ```
 
-With this, our `keyMapper` function is completely independent of other code in our script, and it can be event imported from another file to make things even clearer. But now that we have this function we can see other possibilities for improvement.
+With this, our `keyMapper` function is completely independent of other code in our script, and it can be even imported from another file to make things even clearer. But now that we have this function we can see other possibilities for improvement.
 
 ### Removing hardcoded values
 
 One of the essential things that we can do in order to make the function more flexible is to remove any hard coded values that we use and instead pass them to the function as parameters.
 
-The most important values that we need and are hardcoded are the selector for the background container element (`#background`), the parts for the image url, and the time delay value in this check `if (currentTime - lastKeyTime > 1000)`. There is also the `charList` variable, but event though we can also pass it as the parameter and control exactly which characters are allowed, we can leave it for now to make things simpler. Instead, what we can do with the `charList` is to move it out of the event listener, into the `keyMapper` function to avoid declaring it on every keystroke. So, let's make all these changes.
+The most important values that we need and are hardcoded are the selector for the background container element (`#background`), the parts for the image url, and the time delay value in this check `if (currentTime - lastKeyTime > 1000)`. There is also the `charList` variable, but even though we can also pass it as the parameter and control exactly which characters are allowed, we can leave it for now to make things simpler. Instead, what we can do with the `charList` is to move it out of the event listener, into the `keyMapper` function to avoid declaring it on every keystroke. So, let's make all these changes.
 
 ```javascript
 document.addEventListener('DOMContentLoaded', () => {
@@ -429,7 +429,7 @@ function updateBackground(keySequence) {
 }
 ```
 
-The `options` object now holds the name of the event to listen to and the time delay between the keystrokes. Inside the `keyMapper` function we have these two lines:
+The `options` object now holds the name of the event to listen to and the time delay between the keystrokes. Inside the `keyMapper` function we also have these two lines:
 
 ```javascript
     const eventType = options && options.eventType || 'keydown';
@@ -518,7 +518,9 @@ In this last code sample, I have removed the character test since it does not re
 
 ## Final touch
 
-Our script is complete now. We can set options, create any callback function that we want, the state is updated immutably. Overall, our `keyMapper` function is now pretty flexible. If you take a closer look of the page, you will notice that there is that column on the left with some information. On the lower part of the column you can see the placeholders for the key sequence ("some keys") that the user has entered and for the feedback message ("you got") for the user. Those are currently useless, but we can change that easiliy. There are multiple way of doing that.
+Our script is complete now. We can set options, create any callback function that we want, the state is updated immutably. Overall, our `keyMapper` function is now pretty flexible.
+
+If you take a closer look of the page, you will notice that there is that column on the left with some information. On the lower part of the column you can see the placeholders for the key sequence ("some keys") that the user has entered and for the feedback message ("nothing yet") for the user. Those are currently useless, but we can change that easiliy. There are multiple way of doing that.
 
 The simplest way is to add more functionality to the callback function `updateBackground`. But that will then change what the function does and its name won't be describing properly what it does. So, we could write our new code inside another function and call that function from the `updateBackground` function. That is not ideal solution, but it is better thatn to just slap the new code into the `updateBackground` function which has nothing to do with updating the background. Here's how we'd do that:
 
@@ -637,4 +639,10 @@ and then on every `buffer` update all of those functions get called:
 callbackList.forEach(callback => callback(buffer));
 ```
 
-Now adding new functianlity on key events is as easy as writing a function that preforms what we want and passing its reference to the `keyMapper` function when we call it.
+Adding new functionality for key events is now as easy as writing a function that preforms what we want and passing its reference to the `keyMapper` function when we call it.
+
+## Conclusion
+
+Even though the basic functionality of reacting on a specific key sequence was a short and simple task, I wanted to go a few steps further and show how we can really make a function that is flexible to enable us a bit more control. We achieved that with passing the list of callback functions and an options object to the `keyMapper` function. But you can make the function even more customizable by providing more options and adding the code into the function related to those new options. Depending on what you need, you can extend it as much as you like. Of course, be reasonable in doing that because you want your code to be readable and easy to reason about.
+
+I hope this article has given you some ideas how you can use this in your projects and please feel free to share them in the comments if you like. Thank you for reading and Happy New Year!
