@@ -501,18 +501,18 @@ One thing to note here is that we never directly update the existing state objec
 The line
 
 ```javascript
-buffer = [...state.buffer, key];
-```
-
-is using the spread operator `...` to fill the new array with the values from the state buffer, and then we add the current key to the array. With that, the buffer is updated.
-
-The line
-
-```javascript
 buffer = [key];
 ```
 
 is resetting the `buffer` in the case where more time has passed between keystrokes than the `keystrokeDelay` defines.
+
+The line
+
+```javascript
+buffer = [...state.buffer, key];
+```
+
+is using the spread operator `...` to fill the new array with the values from the state buffer, and then we add the current key to the array. With that, the buffer is updated.
 
 Finally, the line
 
