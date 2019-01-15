@@ -23,10 +23,10 @@ function keyMapper(callbackList, options) {
         const currentTime = Date.now();
         let buffer = [];
 
-        if (currentTime - state.lastKeyTime < keystrokeDelay) {
-            buffer = [...state.buffer, key];
-        } else {
+        if (currentTime - state.lastKeyTime > keystrokeDelay) {
             buffer = [key];
+        } else {
+            buffer = [...state.buffer, key];
         }
 
         state = {buffer: buffer, lastKeyTime: currentTime};

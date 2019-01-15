@@ -4,7 +4,7 @@ One of the most used features of JavaScript is its ability to react on various e
 
 >For the list of all JavaScript events available [check this MDN page](https://developer.mozilla.org/en-US/docs/Web/Events).
 
-Even though today JavaScript can be used to do so much more, this basic feature of adding interactivity to the web page is still widely used to provide the users with rich and interesting experiences. In this article, we will be looking into how we can use JavaScript to react to the keyboard events, specifically, how to react to the specific key sequence that the user types. So, when the user presses a key combination the web page might show some content, like opening a menu or a modal, it can change the styling of the page or perform any other action you can imagine which is within the JavaScript capabilities.
+Even though today JavaScript can be used to do so much more, this basic feature of adding interactivity to the web page is still widely used to provide the users with rich and interesting experiences. In this article, we will be looking into how we can use JavaScript to react to the keyboard events, specifically, how to react to the specific key sequence that the user types. So, when the user presses a key combination, the web page might show some content, like opening a menu or a modal, it can change the styling of the page or perform any other action you can imagine which is within the JavaScript capabilities.
 
 Before we start I just want to point out that I'm using some ES6 features like [`const`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const) and [`let`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let), the [spread (`...`) operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax), [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions), [etc.](https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/ECMAScript_2015_support_in_Mozilla) If you are not familiar with those, check the provided links to learn more.
 
@@ -14,7 +14,7 @@ For this article I've decided to make an element on the page change its backgrou
 
 ## Basic project
 
-In order to focus only on JavaScript, I've created complete HTML and CSS for the project, and linked the JavaScript file which only contains a console log to make sure it works. You can download the project files [here](https://github.com/Gruximillian/sequential-keybinding/tree/01-project-structure) or you can create your own if you like to have it made your own way.
+In order to focus only on JavaScript, I've created complete HTML and CSS for the project, and linked the JavaScript file which only contains a console log to make sure it works. You can download the initial project files [here](https://github.com/Gruximillian/sequential-keybinding/tree/01-project-structure) or you can create your own if you like to have it made your own way.
 
 Here is quick breakdown of the JavaScript content we initially have.
 
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 It's pretty straightforward, we add an event listener to the document that waits until the DOM is fully loaded and then calls the callback function. The callback function currently only has the `'use strict'` statement and a console log to verify that the file is correctly linked to the HTML page.
 
-> We can omit this event listener and the callback that is passed to it, but then the script file should be placed at the end of the `body` HTML element, to make sure that the DOM is fully loaded when the javascript start executing. If you choose so, feel free to do it. This is just my preferred way of doing it, with the benefit that it also encapsulates all of the JavaScript code into a function and avoids global scope pollution.
+> We can omit this event listener and the callback that is passed to it, but then the script file should be placed at the end of the `body` HTML element to make sure that the DOM is fully loaded when the javascript starts executing. If you choose so, feel free to do it. This is just my preferred way of doing it, with the benefit that it also encapsulates all of the JavaScript code into a function and avoids global scope pollution.
 
 ### Listening to the key Events
 
@@ -40,7 +40,7 @@ The next step would be to detect when the user presses a key. We do that the sam
 
 From this description we can immediately see that the `keypress` is definitely not suitable for our purpose. That leaves us with `keydown` and `keyup`. In our case both of these will do well, but in a different situation one of them might be more suitable than the other, so you will need to assess the situation and choose accordingly. Only difference we can notice here is that if we use `keyup` it might feel a bit laggy, while `keydown` really feels like the reaction is immediate. I will choose `keydown`, but since the same can be achieved with `keyup`, feel free to use the event you like more.
 
-Now, let's add the event listener. Remove the console log and in its place add this:
+Now, let's add the event listener and remove the console log:
 
 ```javascript
 document.addEventListener('DOMContentLoaded', () => {
@@ -122,7 +122,7 @@ If we define the `buffer` array inside the `keydown` event listener, it will be 
 
 ![logging the key sequence](https://raw.githubusercontent.com/Gruximillian/sequential-keybinding/master/screenshots/hello.gif)
 
-See how after writing 'hello' and some delay, when I continue typing, it still has all of the previous values in the array. That is not very useful for what we want. It would be good to reset the list of entered keys after a certain time delay. For the condition to do that we can use the time interval between the last two key presses. If that interval is longer than the specified amount of time, then we will reset the `buffer` array. Let's do that next.
+See how after writing 'hello' and some delay, when I continue typing, it still has all of the previous values in the array. That is not very useful for what we want. It would be good to reset the list of entered keys after a certain time has passed since the user entered the last key. For the condition to do that we can use the time interval between the last two key presses. If that interval is longer than the specified amount of time, then we will reset the `buffer` array. Let's do that next.
 
 ### Limit the time interval between key presses
 
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 We introduced two new variables, `lastKeyTime` and `currentTime`. We can do it with just `lastKeyTime`, but it is much easier to reason about with `currentTime` variable present. Let's see what we did here.
 
-First, we defined `lastKeyTime` variable and initialized it with a current time value. We had to initialize it because we need some value to perform a calculation bellow. We can use zero as a value here, but to make it consistent, let's use the current time value. Next, we defined `currentTime` variable and initialized it with the current time as well. At this point someone might ask why two variables that have the same value?! Bare in mind, that those are just initialization values, at least for `lastKeyTime`. We will need to update that value after every keystroke. And notice that `lastKeyTime` is initialized outside the event listener, that is, only once, while `currentTime` will be reinitialized on every keystroke.
+First, we defined `lastKeyTime` variable and initialized it with a current time value. We had to initialize it because we need some value to perform a calculation bellow. We can use zero as a value here, but to make it consistent, let's use the current time value. Next, we defined `currentTime` variable and initialized it with the current time as well. At this point someone might ask why two variables that have the same value?! Bare in mind that those are just initialization values, at least for `lastKeyTime`. We will need to update that value after every keystroke. And notice that `lastKeyTime` is initialized outside the event listener, that is, only once, while `currentTime` will be reinitialized on every keystroke.
 
 Now we have an important part, the check whether enough time has passed between the keystrokes. If it has, we want to reset the `buffer` variable, the array that holds characters that user has pressed. To do that check we simply subtract `lastKeyTime` from `currentTime` variable and check if the result is greater than some number. In the example, that number is 1000, that is 1000 milliseconds or 1 second. That is a good starting value, and it can be changed later to better tune the experience. So, if the condition `currentTime - lastKeyTime > 1000` is true, we are resetting the `buffer` to an empty array: `buffer = []`; After that, the `buffer` will receive a new key, but it will be the only one in the array.
 
@@ -168,7 +168,7 @@ The last thing we need to do here is to update the `lastKeyTime` value. We simpl
 
 Finally, we are ready to do what we wanted, change the background based on the sequence of keys that user has entered.
 
-If the user enters the correct key sequence, we need to grab an element on the page and update its background according to the user input. That seems like we need to have a check for the correct key sequence. While that is almost certainly true in most cases, in this one it is not. The nature of this problem allows us to skip the check if we are ok with what happens if the key sequence is not correct. What do I mean by this? Let me explain in detail.
+If the user enters the correct key sequence, we need to grab an element on the page and update its background according to the user input. That seems like we need to have a check for the correct key sequence. While that is almost certainly true in most cases, in this one it is not necessary. The nature of this problem allows us to skip the check if we are ok with what happens if the key sequence is not correct. What do I mean by this? Let me explain in detail.
 
 If we want to change the background image using CSS, we will need to update the url for the image. If the images are named the same as the key sequences, then all we need to do is to read the input, make it a string, and set that as the url for the background image. The interesting thing is that if the image does not exist, the background will not be shown. Which means that in cases where we do have an image displayed, and then type something that does not match an existing image url, the background image will be gone. In this case I am ok with that, therefore the check if the url is correct is not needed. But if we would like to keep the currently displayed image, then that check will be necessary. Let's do it the simple way, that is, without that check.
 
@@ -207,7 +207,7 @@ With this we have achieved the main goal of this article. Now the user can try t
 
 ## Improving the project
 
-Looking at our code in whole shows us that we are using some 'global' variables. Global in the sense that they are in the top context of our script, enclosed in the `DOMContentLoaded` event listener function where all the rest of the code will be, meaning that they will mix with other variables in the top level context of our script. The declaration of the variables `buffer` and `lastKeyTime` can't go inside the `keydown` event listener because that will reset them with every keystroke and break the functionality.
+Looking at our code in whole shows us that we are using some 'global' variables. Global in the sense that they are in the top context of our script, enclosed in the `DOMContentLoaded` event listener function where all the rest of the code will be, meaning that they will mix with other variables in the top level context of our script. But the declaration of the variables `buffer` and `lastKeyTime` can't go inside the `keydown` event listener because that will reset them with every keystroke and break the functionality.
 
 ### Wrapping the code into a function
 
@@ -250,9 +250,9 @@ With this, our `keyMapper` function is completely independent of other code in o
 
 ### Removing hardcoded values
 
-One of the essential things that we can do in order to make the function more flexible is to remove any hard coded values that we use and instead pass them to the function as parameters.
+One of the essential things that we can do in order to make the function more flexible is to remove any hardcoded values that we use and instead pass them to the function as parameters.
 
-The most important values that we need and are hardcoded are the selector for the background container element (`#background`), the parts for the image url, and the time delay value in this check `if (currentTime - lastKeyTime > 1000)`. There is also the `charList` variable, but even though we can also pass it as the parameter and control exactly which characters are allowed, we can leave it for now to make things simpler. Instead, what we can do with the `charList` is to move it out of the event listener, into the `keyMapper` function to avoid declaring it on every keystroke. So, let's make all these changes.
+The most important values that we need which are hardcoded are the selector for the background container element (`#background`), the parts for the image url, and the time delay value in this check `if (currentTime - lastKeyTime > 1000)`. There is also the `charList` variable, but even though we can also pass it as the parameter and control exactly which characters are allowed, we can leave it for now to make things simpler. Instead, what we can do with the `charList` is to move it out of the event listener, into the `keyMapper` function to avoid declaring it on every keystroke. So, let's make all these changes.
 
 ```javascript
 document.addEventListener('DOMContentLoaded', () => {
@@ -287,11 +287,11 @@ function keyMapper(selector, imgPrefix, imgSuffix, keystrokeDelay) {
 }
 ```
 
-Now the `keyMapper` function takes four arguments which enable us to customize it more easily. Now, when a function has more than three parameters it starts to feel a bit clumsy, it is easy to forget or mix up some. We will fix that a bit later, but for now let's go with this.
+Now the `keyMapper` function takes four parameters which enable us to customize it more easily. Now, when a function has more than three parameters it starts to feel a bit clumsy, it is easy to forget or mix up some. We will fix that a bit later, but for now let's go with this.
 
 ### Create a callback function
 
-The desired action of our script is to update the background on an element on the page. That happens in the last line of the script. But, maybe you want something completely different to happen after a specific key sequence is typed by the user, maybe play a sound, open a dialog or whatever you can think of. In our current version of the script, we can only update the background. But it would be really nice if we can easily tell our script if we want to do something else instead, that is, to use the `keyMapper` function to be able to execute a specific function that we have defined. In order to do that, we can define a function that we can pass to the `keyMapper` function and then execute it from there.
+The desired action of our script is to update the background on an element on the page. That happens on the last line of the script. But maybe you want something completely different to happen after a specific key sequence is typed by the user, maybe play a sound, open a dialog or whatever you can think of. In our current version of the script, we can only update the background. But it would be really nice if we can easily tell our script if we want to do something else instead, that is, to use the `keyMapper` function to be able to execute a specific function that we have defined. In order to do that, we can define a function that we can pass to the `keyMapper` function and then execute it from there.
 
 ```javascript
 document.addEventListener('DOMContentLoaded', () => {
@@ -330,7 +330,7 @@ function updateBackground(selector, imgPrefix, keySequence, imgSuffix) {
 }
 ```
 
-As you can see, new `keyMapper` function accepts one more parameter (dooh!) `callback` which is a function that we want to execute after a key is pressed. On the last line inside `keyMapper` function, we are calling that `callback` function and passing to it some variables that it needs. When `keyMapper` is called, we passed to it the function named `updateBackground` which is declared after the `keyMapper` function. Function `updateBackground` basically contains those two last lines from `keyMapper` that we have removed. With this we have completely separated the key sequence saving and the action that is performed after that sequence is obtained. If we were to write a new function and pass it to the `keyMapper` as the callback instead of the `updateBackground` function, we can get a completely different behavior.
+As you can see, new `keyMapper` function accepts one more parameter (dooh!), `callback`, which is a function that we want to execute after a key is pressed. On the last line inside `keyMapper` function, we are calling that `callback` function and passing to it some variables that it needs. When `keyMapper` is called, we passed to it the function named `updateBackground` which is declared after the `keyMapper` function. Function `updateBackground` basically contains those two last lines from `keyMapper` that we have removed. With this we have completely separated the key sequence saving and the action that is performed after that sequence is obtained. If we were to write a new function and pass it to the `keyMapper` as the callback instead of the `updateBackground` function, we can get a completely different behavior.
 
 ### A step back
 
@@ -440,9 +440,15 @@ The `options` object now holds the name of the event to listen to and the time d
 
 This is where we made our parameters optional. If the values are provided through the `options` object, they will be used, if not, we will use the default values. You can test that by changing the values in the `options` object. You may completely omit the `options` object in the call to `keyMapper` function and it will still work with the default values. We can also pass the callback function through the options object, but since without that function we would not have any sensible functionality, it seems better to pass it as a separate and a required parameter.
 
+Another thing to notice in this last change is that the parameter order for the `keyMapper` function is reversed. It wasn't necessary to do so, but if a parameter is optional, it is usually provided after the required ones, otherwise if you want to omit the optional `options` parameter, you would need to call `keyMapper` function like this:
+
+```javascript
+keyMapper(null, updateBackground); // null is the value for the options object
+```
+
 ### Add the state management
 
-No, this won't be redux or any other state management library, it would be silly to add the whole library for such small script. We will simply organize our variables that hold the state of the script, the `buffer` and `lastKeyTime`, into one object and update it on every change.
+No, this won't be redux or any other state management library, it would be silly to add the whole library for such small script. We will simply organize our variables which hold the state of the script, the `buffer` and `lastKeyTime`, into one object and update it on every change.
 
 ```javascript
 document.addEventListener('DOMContentLoaded', () => {
@@ -470,10 +476,10 @@ function keyMapper(callback, options) {
         const currentTime = Date.now();
         let buffer = [];
 
-        if (currentTime - state.lastKeyTime < keystrokeDelay) {
-            buffer = [...state.buffer, key];
-        } else {
+        if (currentTime - state.lastKeyTime > keystrokeDelay) {
             buffer = [key];
+        } else {
+            buffer = [...state.buffer, key];
         }
 
         state = {buffer: buffer, lastKeyTime: currentTime};
@@ -490,7 +496,7 @@ function updateBackground(keySequence) {
 
 Now the key sequence and the time of the last keystroke are saved as the `buffer` property and the `lastKeyTime` property of the `state` object. On every keystroke we copy the `buffer` property into the local `buffer` variable and update that variable accordingly. After that, the state gets updated with the local `buffer` variable and the `currentTime` variable. At the end, the `callback` is called with the current `buffer` value.
 
-One thing to note here is that we never update the existing state object nor its `buffer` property, but rather we always create new object for the `state` and new array for the `buffer`. This is known as the immutable update of the state and it is the preferred way of updating the state. We never change previous value/object, we always assign the new value/object to the state.
+One thing to note here is that we never directly update the existing state object nor its `buffer` property, but rather we always create new object for the `state` and new array for the `buffer`. This is known as the immutable update of the state and it is the preferred way of updating the state. We never change previous value/object, we always assign the new value/object to the state.
 
 The line
 
@@ -596,10 +602,10 @@ function keyMapper(callbackList, options) {
         const currentTime = Date.now();
         let buffer = [];
 
-        if (currentTime - state.lastKeyTime < keystrokeDelay) {
-            buffer = [...state.buffer, key];
-        } else {
+        if (currentTime - state.lastKeyTime > keystrokeDelay) {
             buffer = [key];
+        } else {
+            buffer = [...state.buffer, key];
         }
 
         state = {buffer: buffer, lastKeyTime: currentTime};
@@ -629,7 +635,7 @@ function updateUI(keySequence) {
 }
 ```
 
-So, `keyMapper` function is now receiving an array of functions:
+So, `keyMapper` function is now receiving an array of function references:
 
 ```javascript
 keyMapper([updateBackground, updateUI], options);
