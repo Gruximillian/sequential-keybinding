@@ -1,4 +1,4 @@
-# How to bind a sequence of keys in JavaScript
+# How to detect a sequence of keystrokes in JavaScript
 
 One of the most used features of JavaScript is its ability to react on various events that may occur while the user interacts with the web page. In fact, that was the very idea of JavaScript when it appeared, to make web pages dynamic by adding some interactivity to them. With JavaScript we can react when a user clicks on a specific part of the page, when a key is pressed, when mouse moves, when the page is loaded, when an element gets focused, etc.
 
