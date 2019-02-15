@@ -709,7 +709,7 @@ The second property, `options.keystrokeDelay`, is expected to be a number. And i
 
  I've added a function `hasProperty` which will check if the property exists on the object, and only after that check passes we can proceed on to the next checks. On the line for the `delay` you can also see the `options.keystrokeDelay >= 300` check which will limit the delay to 300ms.
 
- One last thing I'd like to mention is that these problems that I'm talking about in this updated section can all be avoided in the first place if we write proper tests for our code. For example, we can easily think of the issues with the empty string when we consider what possible inputs could the function get for the `eventType` property. Same goes for the `keystrokeDelay` property, while considering possible inptus, we can quickly realize that using zero, negatives or even too small numbers is not working good.
+ One last thing I'd like to mention is that these problems that I'm talking about in this updated section can all be avoided in the first place if we write proper tests for our code. For example, we can easily think of the issues with the empty string when we consider what possible inputs could the function get for the `eventType` property. Same goes for the `keystrokeDelay` property, while considering possible inputs, we can quickly realize that using zero, negatives or even too small numbers is not working good.
 
 ## Conclusion
 
