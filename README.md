@@ -649,6 +649,68 @@ callbackList.forEach(callback => callback(buffer));
 
 Adding new functionality for key events is now as easy as writing a function that preforms what we want and passing its reference to the `keyMapper` function when we call it.
 
+## UPDATE (Feb 15, 2019) - JavaScript says this is true (0 == false), and this ('' == false)
+
+After being reminded in the [comments](https://medium.com/@Shrekgrinch/might-want-to-consider-dumping-the-truthy-checking-for-the-options-parameters-4fe666d5909d) about the dangers of using the evaluation of truthy values in JavaScript I've decided to address that and fix the problematic part.
+
+The issue is within these lines:
+
+```javascript
+    const eventType = options && options.eventType || 'keydown';
+    const keystrokeDelay = options && options.keystrokeDelay || 1000;
+```
+
+As I already mentioned, this will use the value from the options object if it exists, and if it does not exist, then it will use the default value. Except that it won't do that in all cases. If for some reason `options.eventType` and `options.keystrokeDelay` have values that are evaluated to falsy, then those values won't be used and it will skip to the defaults.
+
+We expected to have the value `undefined` for those properties if they don't exist, which will evaluate to false and we will then use the defaults. The value `null` can evaluate to false as well, which is also ok.
+
+What we haven't considered here is the type of the variables. That is because, depending on the type of the variable, we can have other falsy values to occur.
+
+We expect the first property, `options.eventType`, to be a string. But what if it is an empty string? JavaScript says that an empty string should evaluate to `false` in such comparisons. Which means that if we pass an empty string to the `options.eventType` property, we will still get the default `keydown` event since the empty string will evaluate to false. But, if we don't pass anything, it would not work! So, it this case it actually works in our favor to fail that check for the emtpy string and use the default `keydown` event type. That's good.
+
+The second property, `options.keystrokeDelay`, is expected to be a number. And in the case of numbers, JavaScript says that the zero should evaluate to `false`. If we wanted to pass the zero for the delay value, it won't be accepted and it will fall back to the default of 1000ms. But on the other hand, I hear you say "Who could type so fast that the zero value should be considered at all?". And you're correct, in that case all of this is pointless, we could only listen for one key at a time.
+
+ So, we're good here as well, no need to do anything? Actually no. What if the number provided is negative? It certainly won't go back in time and react to key presses before they occur, but it will do that as soon as they do occur. Basically, it is the same as setting the value to zero but it passes the truthy test. We see now that we need another condition here, we need numbers greater than zero. Now, we solved the issue, but what if someone passes number like 10? Is 10ms enough to connect two keystrokes for you? Not for me, that's for sure. I barely can do it with 250ms delay. From my point of view as the developer of this app I see no reason to enable delays less than the minimum I need to connect two keystrokes. So I've decided to limit the delay to the minimum of 300 miliseconds.
+
+ Here's updated code for the `keyMapper` function:
+
+ ```javascript
+ function keyMapper(callbackList, options) {
+     const delay = hasProperty('keystrokeDelay', options) && options.keystrokeDelay >= 300 && options.keystrokeDelay;
+     const keystrokeDelay = delay || 1000;
+     const eventType = hasProperty('eventType', options) && options.eventType || 'keydown';
+
+     let state = {
+         buffer: [],
+         lastKeyTime: Date.now()
+     };
+
+     document.addEventListener(eventType, event => {
+         const key = event.key.toLowerCase();
+         const currentTime = Date.now();
+         let buffer = [];
+
+         if (currentTime - state.lastKeyTime > keystrokeDelay) {
+             buffer = [key];
+         } else {
+             buffer = [...state.buffer, key];
+         }
+
+         state = {buffer: buffer, lastKeyTime: currentTime};
+
+         callbackList.forEach(callback => callback(buffer));
+     });
+
+     function hasProperty(property, object) {
+         return object && object.hasOwnProperty(property);
+     }
+ }
+ ```
+
+ I've added a function `hasProperty` which will check if the property exists on the object, and only after that check passes we can proceed on to the next checks. On the line for the `delay` you can also see the `options.keystrokeDelay >= 300` check which will limit the delay to 300ms.
+
+ One last thing I'd like to mention is that these problems that I'm talking about in this updated section can all be avoided in the first place if we write proper tests for our code. For example, we can easily think of the issues with the empty string when we consider what possible inputs could the function get for the `eventType` property. Same goes for the `keystrokeDelay` property, while considering possible inptus, we can quickly realize that using zero, negatives or even too small numbers is not working good.
+
 ## Conclusion
 
 Even though the basic functionality of reacting on a specific key sequence was a short and simple task, I wanted to go a few steps further and show how we can really make a function that is flexible to enable us a bit more control. We achieved that with passing the list of callback functions and an options object to the `keyMapper` function. But you can make the function even more customizable by providing more options and adding the code into the function related to those new options. Depending on what you need, you can extend it as much as you like. Of course, be reasonable in doing that because you want your code to be readable and easy to reason about.

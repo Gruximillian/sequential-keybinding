@@ -3,15 +3,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const options = {
         eventType: 'keydown',
-        keystrokeDelay: 1000
+        keystrokeDelay: 400
     };
 
     keyMapper([updateBackground, updateUI], options);
 });
 
 function keyMapper(callbackList, options) {
-    const eventType = options && options.eventType || 'keydown';
-    const keystrokeDelay = options && options.keystrokeDelay || 1000;
+    const delay = hasProperty('keystrokeDelay', options) && options.keystrokeDelay >= 300 && options.keystrokeDelay;
+    const keystrokeDelay = delay || 1000;
+    const eventType = hasProperty('eventType', options) && options.eventType || 'keydown';
 
     let state = {
         buffer: [],
@@ -33,6 +34,10 @@ function keyMapper(callbackList, options) {
 
         callbackList.forEach(callback => callback(buffer));
     });
+
+    function hasProperty(property, object) {
+        return object && object.hasOwnProperty(property);
+    }
 }
 
 function updateBackground(keySequence) {
