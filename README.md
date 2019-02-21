@@ -615,9 +615,10 @@ function keyMapper(callbackList, options) {
 }
 
 function updateBackground(keySequence) {
-    const keys = keySequence.filter(key => !isNaN(parseInt(key)) || key.toLowerCase() !== key.toUpperCase());
+    const validKeys = keySequence.every(key => !isNaN(parseInt(key)) || key.toLowerCase() !== key.toUpperCase());
+    if (!validKeys) return;
     const container = document.querySelector('#background');
-    container.style.backgroundImage = `url(images/${keys.join('')}.jpg)`;
+    container.style.backgroundImage = `url(images/${keySequence.join('')}.jpg)`;
 }
 
 function updateUI(keySequence) {
@@ -650,11 +651,12 @@ callbackList.forEach(callback => callback(buffer));
 
 Adding new functionality for key events is now as easy as writing a function that preforms what we want and passing its reference to the `keyMapper` function when we call it.
 
-## UPDATE (Feb 21 2019)
-It was brought up in the comments that the user can enter a path like `../myimage` and that would access some file that is up one level in the directory structure… if it exists. To avoid the possibility to use any characters other than letters and numbers, this line is added to the `updateBackgroundfunction`:
+## UPDATE (Feb 21, 2019)
+It was brought up in the comments that the user can enter a path like `../myimage` and that would access some file that is up one level in the directory structure… if it exists. To avoid the possibility to use any characters other than letters and numbers, this lines are added to the `updateBackgroundfunction`:
 
 ```javascript
-const keys = keySequence.filter(key => !isNaN(parseInt(key)) || key.toLowerCase() !== key.toUpperCase());
+const validKeys = keySequence.every(key => !isNaN(parseInt(key)) || key.toLowerCase() !== key.toUpperCase());
+if (!validKeys) return;
 ```
 
 Also, the keyMapper function now returns keys not converted to lower case. That conversion now happens in the callback functions that need to do that, like `updateUI` function.

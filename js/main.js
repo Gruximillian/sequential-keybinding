@@ -41,9 +41,10 @@ function keyMapper(callbackList, options) {
 }
 
 function updateBackground(keySequence) {
-    const keys = keySequence.filter(key => !isNaN(parseInt(key)) || key.toLowerCase() !== key.toUpperCase());
+    const validKeys = keySequence.every(key => !isNaN(parseInt(key)) || key.toLowerCase() !== key.toUpperCase());
+    if (!validKeys) return;
     const container = document.querySelector('#background');
-    container.style.backgroundImage = `url(images/${keys.join('')}.jpg)`;
+    container.style.backgroundImage = `url(images/${keySequence.join('')}.jpg)`;
 }
 
 function updateUI(keySequence) {
