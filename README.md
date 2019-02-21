@@ -598,7 +598,7 @@ function keyMapper(callbackList, options) {
     };
 
     document.addEventListener(eventType, event => {
-        const key = event.key.toLowerCase();
+        const key = event.key;
         const currentTime = Date.now();
         let buffer = [];
 
@@ -615,12 +615,13 @@ function keyMapper(callbackList, options) {
 }
 
 function updateBackground(keySequence) {
+    const keys = keySequence.filter(key => !isNaN(parseInt(key)) || key.toLowerCase() !== key.toUpperCase());
     const container = document.querySelector('#background');
-    container.style.backgroundImage = `url(images/${keySequence.join('')}.jpg)`;
+    container.style.backgroundImage = `url(images/${keys.join('')}.jpg)`;
 }
 
 function updateUI(keySequence) {
-    const userInput = keySequence.join('');
+    const userInput = keySequence.join('').toLowerCase();
     const keySequences = {
         'idfa': 'All Weapons + Ammo',
         'idkfa': 'All Weapons + Ammo + Keys',
@@ -648,6 +649,15 @@ callbackList.forEach(callback => callback(buffer));
 ```
 
 Adding new functionality for key events is now as easy as writing a function that preforms what we want and passing its reference to the `keyMapper` function when we call it.
+
+## UPDATE (Feb 21 2019)
+It was brought up in the comments that the user can enter a path like `../myimage` and that would access some file that is up one level in the directory structure… if it exists. To avoid the possibility to use any characters other than letters and numbers, this line is added to the `updateBackgroundfunction`:
+
+```javascript
+const keys = keySequence.filter(key => !isNaN(parseInt(key)) || key.toLowerCase() !== key.toUpperCase());
+```
+
+Also, the keyMapper function now returns keys not converted to lower case. That conversion now happens in the callback functions that need to do that, like `updateUI` function.
 
 ## UPDATE (Feb 15, 2019) - JavaScript says this is true (0 == false), and this ('' == false)
 

@@ -20,7 +20,7 @@ function keyMapper(callbackList, options) {
     };
 
     document.addEventListener(eventType, event => {
-        const key = event.key.toLowerCase();
+        const key = event.key;
         const currentTime = Date.now();
         let buffer = [];
 
@@ -41,12 +41,13 @@ function keyMapper(callbackList, options) {
 }
 
 function updateBackground(keySequence) {
+    const keys = keySequence.filter(key => !isNaN(parseInt(key)) || key.toLowerCase() !== key.toUpperCase());
     const container = document.querySelector('#background');
-    container.style.backgroundImage = `url(images/${keySequence.join('')}.jpg)`;
+    container.style.backgroundImage = `url(images/${keys.join('')}.jpg)`;
 }
 
 function updateUI(keySequence) {
-    const userInput = keySequence.join('');
+    const userInput = keySequence.join('').toLowerCase();
     const keySequences = {
         'idfa': 'All Weapons + Ammo',
         'idkfa': 'All Weapons + Ammo + Keys',
